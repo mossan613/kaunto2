@@ -1,0 +1,724 @@
+/* ============================================================
+   基本設定
+============================================================ */
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 15px;
+
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+    background-color: #1565c0;
+
+    text-align: center;
+
+    color: #222;
+}
+
+
+/* ============================================================
+   タイトル
+============================================================ */
+
+h1 {
+    margin: 0 0 12px;
+
+    color: #ffffff;
+
+    font-size: 26px;
+}
+
+h2 {
+    margin: 0 0 6px;
+
+    font-size: 18px;
+}
+
+
+/* ============================================================
+   メインレイアウト
+============================================================ */
+
+.main-layout {
+    display: grid;
+
+    /*
+     * 左：カウント
+     * 右：動画
+     */
+    grid-template-columns:
+        300px
+        minmax(550px, 1fr);
+
+    gap: 12px;
+
+    max-width: 1300px;
+
+    margin: 0 auto;
+
+    align-items: start;
+}
+
+
+/* ============================================================
+   カウントエリア
+============================================================ */
+
+.count-area {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 8px;
+}
+
+
+/* ============================================================
+   上り・下りカード
+============================================================ */
+
+.direction {
+    width: 100%;
+
+    padding: 8px 10px;
+
+    background-color: #ffffff;
+
+    border-radius: 8px;
+
+    box-shadow:
+        0 2px 7px
+        rgba(0, 0, 0, 0.15);
+}
+
+
+/* ============================================================
+   見出し
+============================================================ */
+
+.up h2 {
+    color: #1976d2;
+}
+
+.down h2 {
+    color: #d32f2f;
+}
+
+
+/* ============================================================
+   カウント行
+============================================================ */
+
+.count-row {
+    display: grid;
+
+    /*
+     * 種類
+     * キー
+     * －
+     * 数字
+     * ＋
+     */
+    grid-template-columns:
+        72px
+        24px
+        32px
+        42px
+        32px;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 3px;
+
+    margin: 3px 0;
+
+    font-size: 12px;
+
+    line-height: 1;
+}
+
+
+/* ============================================================
+   キーボード表示
+============================================================ */
+
+.key {
+    width: 24px;
+    height: 24px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    background-color: #333333;
+
+    color: #ffffff;
+
+    border-radius: 4px;
+
+    font-size: 10px;
+
+    font-weight: bold;
+}
+
+
+/* ============================================================
+   ＋・－ボタン
+============================================================ */
+
+.count-row button {
+    width: 32px;
+    height: 27px;
+
+    padding: 0;
+
+    font-size: 16px;
+
+    font-weight: bold;
+
+    border: none;
+
+    border-radius: 5px;
+
+    background-color: #eeeeee;
+
+    cursor: pointer;
+
+    touch-action: manipulation;
+
+    transition:
+        background-color 0.1s,
+        transform 0.1s;
+}
+
+.count-row button:hover {
+    background-color: #cccccc;
+}
+
+.count-row button:active {
+    background-color: #aaaaaa;
+
+    transform: scale(0.95);
+}
+
+
+/* ============================================================
+   カウント数字
+============================================================ */
+
+.count-row span[id] {
+    font-size: 15px;
+
+    font-weight: bold;
+
+    min-width: 40px;
+
+    text-align: center;
+}
+
+
+/* ============================================================
+   合計
+============================================================ */
+
+.total {
+    margin-top: 5px;
+
+    padding: 5px;
+
+    background-color: #eeeeee;
+
+    border-radius: 5px;
+
+    font-size: 14px;
+
+    font-weight: bold;
+}
+
+
+/* ============================================================
+   動画エリア
+============================================================ */
+
+.video-area {
+    width: 100%;
+
+    padding: 10px;
+
+    background-color: #ffffff;
+
+    border-radius: 8px;
+
+    box-shadow:
+        0 2px 7px
+        rgba(0, 0, 0, 0.15);
+}
+
+
+/* ============================================================
+   動画タイトル
+============================================================ */
+
+.video-area h2 {
+    margin: 0 0 6px;
+
+    font-size: 18px;
+}
+
+
+/* ============================================================
+   動画コンテナ
+============================================================ */
+
+.video-container {
+    position: relative;
+
+    width: 100%;
+
+    aspect-ratio: 16 / 9;
+
+    background-color: #111111;
+
+    border-radius: 6px;
+
+    overflow: hidden;
+}
+
+
+/* ============================================================
+   動画本体
+============================================================ */
+
+.video-container video {
+    display: block;
+
+    width: 100%;
+
+    height: 100%;
+
+    object-fit: contain;
+
+    background-color: #000000;
+}
+
+
+/* ============================================================
+   動画メッセージ
+============================================================ */
+
+.video-message {
+    position: absolute;
+
+    top: 50%;
+    left: 50%;
+
+    transform: translate(-50%, -50%);
+
+    width: 90%;
+
+    color: #ffffff;
+
+    font-size: 16px;
+
+    pointer-events: none;
+}
+
+
+/* ============================================================
+   動画選択エリア
+============================================================ */
+
+.video-buttons {
+    margin-top: 8px;
+}
+
+
+/* ============================================================
+   動画選択ボタン
+============================================================ */
+
+.video-select {
+    display: inline-block;
+
+    padding: 7px 16px;
+
+    color: #ffffff;
+
+    background-color: #1976d2;
+
+    border-radius: 6px;
+
+    font-size: 13px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.1s,
+        transform 0.1s;
+}
+
+.video-select:hover {
+    background-color: #1565c0;
+}
+
+.video-select:active {
+    background-color: #0d47a1;
+
+    transform: scale(0.97);
+}
+
+
+/* ============================================================
+   ファイル入力
+============================================================ */
+
+.video-select input {
+    display: none;
+}
+
+
+/* ============================================================
+   操作ボタン
+============================================================ */
+
+.control-buttons {
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    gap: 8px;
+
+    margin: 10px auto 0;
+}
+
+
+/* ============================================================
+   CSV出力ボタン
+============================================================ */
+
+.csv-button {
+    padding: 8px 20px;
+
+    font-size: 14px;
+
+    font-weight: bold;
+
+    color: #ffffff;
+
+    background-color: #1976d2;
+
+    border: none;
+
+    border-radius: 7px;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.1s,
+        transform 0.1s;
+}
+
+.csv-button:hover {
+    background-color: #1565c0;
+}
+
+.csv-button:active {
+    background-color: #0d47a1;
+
+    transform: scale(0.97);
+}
+
+
+/* ============================================================
+   リセットボタン
+============================================================ */
+
+.reset {
+    padding: 8px 20px;
+
+    font-size: 14px;
+
+    font-weight: bold;
+
+    color: #ffffff;
+
+    background-color: #555555;
+
+    border: none;
+
+    border-radius: 7px;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.1s,
+        transform 0.1s;
+}
+
+.reset:hover {
+    background-color: #333333;
+}
+
+.reset:active {
+    background-color: #222222;
+
+    transform: scale(0.97);
+}
+
+
+/* ============================================================
+   保存状態
+============================================================ */
+
+.save-status {
+    margin-top: 5px;
+
+    color: #ffffff;
+
+    font-size: 11px;
+}
+
+
+/* ============================================================
+   タブレット
+============================================================ */
+
+@media (max-width: 900px) {
+
+    .main-layout {
+        grid-template-columns: 1fr;
+
+        gap: 10px;
+    }
+
+
+    /*
+     * タブレットでは動画を上に表示
+     */
+    .video-area {
+        order: -1;
+    }
+
+
+    /*
+     * 上り・下りを横並び
+     */
+    .count-area {
+        display: grid;
+
+        grid-template-columns: 1fr 1fr;
+
+        gap: 8px;
+    }
+
+}
+
+
+/* ============================================================
+   スマホ
+============================================================ */
+
+@media (max-width: 600px) {
+
+    body {
+        padding: 8px;
+    }
+
+
+    h1 {
+        font-size: 22px;
+
+        margin-bottom: 8px;
+    }
+
+
+    .main-layout {
+        display: flex;
+
+        flex-direction: column;
+
+        gap: 8px;
+    }
+
+
+    /*
+     * スマホでは動画を最上部
+     */
+    .video-area {
+        order: -1;
+
+        padding: 8px;
+    }
+
+
+    .video-area h2 {
+        font-size: 16px;
+    }
+
+
+    /*
+     * 上り・下りを縦並び
+     */
+    .count-area {
+        display: flex;
+
+        flex-direction: column;
+
+        gap: 8px;
+    }
+
+
+    .direction {
+        padding: 7px 8px;
+    }
+
+
+    .direction h2 {
+        font-size: 15px;
+
+        margin-bottom: 4px;
+    }
+
+
+    .count-row {
+        grid-template-columns:
+            70px
+            23px
+            31px
+            40px
+            31px;
+
+        gap: 3px;
+
+        margin: 3px 0;
+
+        font-size: 11px;
+    }
+
+
+    .key {
+        width: 23px;
+        height: 23px;
+
+        font-size: 9px;
+    }
+
+
+    .count-row button {
+        width: 31px;
+        height: 26px;
+
+        font-size: 15px;
+    }
+
+
+    .count-row span[id] {
+        font-size: 14px;
+
+        min-width: 38px;
+    }
+
+
+    .total {
+        padding: 4px;
+
+        margin-top: 4px;
+
+        font-size: 13px;
+    }
+
+
+    .video-select {
+        padding: 6px 14px;
+
+        font-size: 12px;
+    }
+
+
+    .control-buttons {
+        flex-direction: column;
+
+        width: 100%;
+
+        gap: 6px;
+    }
+
+
+    .csv-button,
+    .reset {
+        width: 100%;
+
+        padding: 8px;
+
+        font-size: 13px;
+    }
+
+}
+
+
+/* ============================================================
+   超小型スマホ
+============================================================ */
+
+@media (max-width: 380px) {
+
+    h1 {
+        font-size: 20px;
+    }
+
+
+    .count-row {
+        grid-template-columns:
+            65px
+            22px
+            29px
+            38px
+            29px;
+
+        gap: 2px;
+
+        font-size: 10px;
+    }
+
+
+    .key {
+        width: 22px;
+        height: 22px;
+
+        font-size: 9px;
+    }
+
+
+    .count-row button {
+        width: 29px;
+        height: 25px;
+
+        font-size: 14px;
+    }
+
+
+    .count-row span[id] {
+        font-size: 13px;
+    }
+
+
+    .total {
+        font-size: 12px;
+    }
+
+}
