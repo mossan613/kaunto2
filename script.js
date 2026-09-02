@@ -1,6 +1,8 @@
 // ============================================================
-// 交通量カウント
+// 交通量カウントシステム
+// 動画再生優先版
 // ============================================================
+
 
 // ============================================================
 // localStorageの保存キー
@@ -16,21 +18,25 @@ const STORAGE_KEY = "traffic_counts";
 const counts = {
 
     up: {
+
         car: 0,
         truck: 0,
         bus: 0,
         bike: 0,
         person: 0,
         bicycle: 0
+
     },
 
     down: {
+
         car: 0,
         truck: 0,
         bus: 0,
         bike: 0,
         person: 0,
         bicycle: 0
+
     }
 
 };
@@ -41,12 +47,14 @@ const counts = {
 // ============================================================
 
 const types = [
+
     "car",
     "truck",
     "bus",
     "bike",
     "person",
     "bicycle"
+
 ];
 
 
@@ -55,8 +63,10 @@ const types = [
 // ============================================================
 
 const directions = [
+
     "up",
     "down"
+
 ];
 
 
@@ -82,6 +92,7 @@ const typeNames = {
 
 const KEY_MAP = {
 
+    // 上り
     "1": ["up", "car"],
     "2": ["up", "truck"],
     "3": ["up", "bus"],
@@ -89,6 +100,7 @@ const KEY_MAP = {
     "5": ["up", "person"],
     "6": ["up", "bicycle"],
 
+    // 下り
     "q": ["down", "car"],
     "w": ["down", "truck"],
     "e": ["down", "bus"],
@@ -100,7 +112,14 @@ const KEY_MAP = {
 
 
 // ============================================================
-// データ保存
+// 現在読み込んでいる動画
+// ============================================================
+
+let currentVideoUrl = null;
+
+
+// ============================================================
+// 保存
 // ============================================================
 
 function saveCounts() {
@@ -112,7 +131,9 @@ function saveCounts() {
             JSON.stringify(counts)
         );
 
-        updateSaveStatus("保存済み");
+        updateSaveStatus(
+            "保存済み"
+        );
 
     } catch (error) {
 
@@ -121,7 +142,9 @@ function saveCounts() {
             error
         );
 
-        updateSaveStatus("保存エラー");
+        updateSaveStatus(
+            "保存エラー"
+        );
 
     }
 
@@ -129,19 +152,24 @@ function saveCounts() {
 
 
 // ============================================================
-// 保存状態
+// 保存状態表示
 // ============================================================
 
 function updateSaveStatus(message) {
 
     const element =
-        document.getElementById("save-status");
+        document.getElementById(
+            "save-status"
+        );
 
     if (!element) {
+
         return;
+
     }
 
-    element.textContent = message;
+    element.textContent =
+        message;
 
 }
 
@@ -155,42 +183,64 @@ function loadCounts() {
     try {
 
         const savedData =
-            localStorage.getItem(STORAGE_KEY);
+            localStorage.getItem(
+                STORAGE_KEY
+            );
+
 
         if (!savedData) {
+
             return;
+
         }
 
+
         const data =
-            JSON.parse(savedData);
+            JSON.parse(
+                savedData
+            );
 
-        directions.forEach(direction => {
 
-            if (
-                !data[direction] ||
-                typeof data[direction] !== "object"
-            ) {
-                return;
-            }
-
-            types.forEach(type => {
-
-                const value =
-                    data[direction][type];
+        directions.forEach(
+            direction => {
 
                 if (
-                    typeof value === "number" &&
-                    Number.isInteger(value) &&
-                    value >= 0
+                    !data[direction] ||
+                    typeof data[direction] !== "object"
                 ) {
 
-                    counts[direction][type] = value;
+                    return;
 
                 }
 
-            });
 
-        });
+                types.forEach(
+                    type => {
+
+                        const value =
+                            data[
+                                direction
+                            ][type];
+
+
+                        if (
+                            typeof value === "number" &&
+                            Number.isInteger(value) &&
+                            value >= 0
+                        ) {
+
+                            counts[
+                                direction
+                            ][type] = value;
+
+                        }
+
+                    }
+                );
+
+            }
+        );
+
 
     } catch (error) {
 
@@ -205,22 +255,31 @@ function loadCounts() {
 
 
 // ============================================================
-// 表示更新
+// カウント表示更新
 // ============================================================
 
-function updateDisplay(direction, type) {
+function updateDisplay(
+    direction,
+    type
+) {
 
     const element =
         document.getElementById(
             `${direction}-${type}`
         );
 
+
     if (!element) {
+
         return;
+
     }
 
+
     element.textContent =
-        counts[direction][type];
+        counts[
+            direction
+        ][type];
 
 }
 
@@ -229,29 +288,46 @@ function updateDisplay(direction, type) {
 // 合計更新
 // ============================================================
 
-function updateTotal(direction) {
+function updateTotal(
+    direction
+) {
 
     const data =
-        counts[direction];
+        counts[
+            direction
+        ];
+
 
     const total =
+
         data.car +
+
         data.truck +
+
         data.bus +
+
         data.bike +
+
         data.person +
+
         data.bicycle;
+
 
     const element =
         document.getElementById(
             `${direction}-total`
         );
 
+
     if (!element) {
+
         return;
+
     }
 
-    element.textContent = total;
+
+    element.textContent =
+        total;
 
 }
 
@@ -262,20 +338,140 @@ function updateTotal(direction) {
 
 function updateAllDisplay() {
 
-    directions.forEach(direction => {
+    directions.forEach(
+        direction => {
 
-        types.forEach(type => {
+            types.forEach(
+                type => {
 
-            updateDisplay(
-                direction,
-                type
+                    updateDisplay(
+                        direction,
+                        type
+                    );
+
+                }
             );
 
-        });
 
-        updateTotal(direction);
+            updateTotal(
+                direction
+            );
 
-    });
+        }
+    );
+
+}
+
+
+// ============================================================
+// 動画時間を取得
+// ============================================================
+
+function getVideoTime() {
+
+    const video =
+        document.getElementById(
+            "traffic-video"
+        );
+
+
+    if (!video) {
+
+        return 0;
+
+    }
+
+
+    if (
+        !Number.isFinite(
+            video.currentTime
+        )
+    ) {
+
+        return 0;
+
+    }
+
+
+    return video.currentTime;
+
+}
+
+
+// ============================================================
+// 動画時間を表示用文字列へ変換
+// ============================================================
+
+function formatVideoTime(
+    seconds
+) {
+
+    if (
+        !Number.isFinite(seconds)
+    ) {
+
+        return "00:00";
+
+    }
+
+
+    const hours =
+        Math.floor(
+            seconds / 3600
+        );
+
+
+    const minutes =
+        Math.floor(
+            (seconds % 3600) / 60
+        );
+
+
+    const secs =
+        Math.floor(
+            seconds % 60
+        );
+
+
+    if (hours > 0) {
+
+        return (
+
+            String(hours)
+                .padStart(2, "0")
+
+            +
+
+            ":" +
+
+            String(minutes)
+                .padStart(2, "0")
+
+            +
+
+            ":" +
+
+            String(secs)
+                .padStart(2, "0")
+
+        );
+
+    }
+
+
+    return (
+
+        String(minutes)
+            .padStart(2, "0")
+
+        +
+
+        ":" +
+
+        String(secs)
+            .padStart(2, "0")
+
+    );
 
 }
 
@@ -290,38 +486,101 @@ function changeCount(
     amount
 ) {
 
-    if (!counts[direction]) {
+    if (
+        !counts[direction]
+    ) {
+
         return;
+
     }
+
 
     if (
-        typeof counts[direction][type] !== "number"
+        typeof counts[
+            direction
+        ][type] !== "number"
     ) {
+
         return;
+
     }
 
-    counts[direction][type] += amount;
 
-    if (counts[direction][type] < 0) {
-        counts[direction][type] = 0;
+    // ----------------------------------------
+    // カウント前の動画時間
+    // ----------------------------------------
+
+    const videoTime =
+        getVideoTime();
+
+
+    // ----------------------------------------
+    // カウント変更
+    // ----------------------------------------
+
+    counts[
+        direction
+    ][type] += amount;
+
+
+    // ----------------------------------------
+    // 0未満防止
+    // ----------------------------------------
+
+    if (
+        counts[
+            direction
+        ][type] < 0
+    ) {
+
+        counts[
+            direction
+        ][type] = 0;
+
     }
+
+
+    // ----------------------------------------
+    // 表示更新
+    // ----------------------------------------
 
     updateDisplay(
         direction,
         type
     );
 
+
     updateTotal(
         direction
     );
 
+
+    // ----------------------------------------
+    // 保存
+    // ----------------------------------------
+
     saveCounts();
+
+
+    // ----------------------------------------
+    // デバッグ表示
+    // ----------------------------------------
+
+    console.log(
+
+        `${typeNames[type]} ` +
+
+        `${amount > 0 ? "+" : ""}${amount}` +
+
+        ` / 動画時間 ${formatVideoTime(videoTime)}`
+
+    );
 
 }
 
 
 // ============================================================
-// 全リセット
+// 全てリセット
 // ============================================================
 
 function resetAll() {
@@ -331,23 +590,40 @@ function resetAll() {
             "全てのカウントをリセットしますか？"
         );
 
+
     if (!result) {
+
         return;
+
     }
 
-    directions.forEach(direction => {
 
-        types.forEach(type => {
+    directions.forEach(
+        direction => {
 
-            counts[direction][type] = 0;
+            types.forEach(
+                type => {
 
-        });
+                    counts[
+                        direction
+                    ][type] = 0;
 
-    });
+                }
+            );
+
+        }
+    );
+
 
     updateAllDisplay();
 
+
     saveCounts();
+
+
+    console.log(
+        "全てのカウントをリセットしました。"
+    );
 
 }
 
@@ -359,68 +635,124 @@ function resetAll() {
 function exportCSV() {
 
     const rows = [
-        ["方向", "種類", "カウント"]
+
+        [
+            "方向",
+            "種類",
+            "カウント"
+        ]
+
     ];
 
 
-    types.forEach(type => {
+    // ----------------------------------------
+    // 上り
+    // ----------------------------------------
 
-        rows.push([
-            "上り",
-            typeNames[type],
-            counts.up[type]
-        ]);
+    types.forEach(
+        type => {
 
-    });
+            rows.push([
+
+                "上り",
+
+                typeNames[type],
+
+                counts.up[type]
+
+            ]);
+
+        }
+    );
 
 
-    types.forEach(type => {
+    // ----------------------------------------
+    // 下り
+    // ----------------------------------------
 
-        rows.push([
-            "下り",
-            typeNames[type],
-            counts.down[type]
-        ]);
+    types.forEach(
+        type => {
 
-    });
+            rows.push([
 
+                "下り",
+
+                typeNames[type],
+
+                counts.down[type]
+
+            ]);
+
+        }
+    );
+
+
+    // ----------------------------------------
+    // CSV文字列
+    // ----------------------------------------
 
     const csv =
         rows
-            .map(row =>
-                row
-                    .map(value => {
+            .map(
+                row => {
 
-                        const text =
-                            String(value ?? "");
+                    return row
+                        .map(
+                            value => {
 
-                        return `"${text.replace(
-                            /"/g,
-                            '""'
-                        )}"`;
+                                const text =
+                                    String(
+                                        value ?? ""
+                                    );
 
-                    })
-                    .join(",")
+
+                                return `"${text.replace(
+                                    /"/g,
+                                    '""'
+                                )}"`;
+
+                            }
+                        )
+                        .join(",");
+
+                }
             )
             .join("\r\n");
 
 
+    // ----------------------------------------
+    // BOM付きUTF-8
+    // ----------------------------------------
+
     const blob =
         new Blob(
+
             [
                 "\uFEFF",
                 csv
             ],
+
             {
                 type:
                     "text/csv;charset=utf-8;"
             }
+
         );
 
 
-    const url =
-        URL.createObjectURL(blob);
+    // ----------------------------------------
+    // ダウンロードURL
+    // ----------------------------------------
 
+    const url =
+        URL.createObjectURL(
+            blob
+        );
+
+
+    // ----------------------------------------
+    // ファイル名
+    // ----------------------------------------
 
     const now =
         new Date();
@@ -429,53 +761,362 @@ function exportCSV() {
     const year =
         now.getFullYear();
 
+
     const month =
         String(
             now.getMonth() + 1
-        ).padStart(2, "0");
+        ).padStart(
+            2,
+            "0"
+        );
+
 
     const day =
         String(
             now.getDate()
-        ).padStart(2, "0");
+        ).padStart(
+            2,
+            "0"
+        );
+
 
     const hour =
         String(
             now.getHours()
-        ).padStart(2, "0");
+        ).padStart(
+            2,
+            "0"
+        );
+
 
     const minute =
         String(
             now.getMinutes()
-        ).padStart(2, "0");
+        ).padStart(
+            2,
+            "0"
+        );
+
 
     const second =
         String(
             now.getSeconds()
-        ).padStart(2, "0");
+        ).padStart(
+            2,
+            "0"
+        );
 
 
     const filename =
         `交通量カウント_${year}${month}${day}_${hour}${minute}${second}.csv`;
 
 
+    // ----------------------------------------
+    // ダウンロード
+    // ----------------------------------------
+
     const link =
-        document.createElement("a");
+        document.createElement(
+            "a"
+        );
 
-    link.href = url;
 
-    link.download = filename;
+    link.href =
+        url;
 
-    document.body.appendChild(link);
+
+    link.download =
+        filename;
+
+
+    document.body.appendChild(
+        link
+    );
+
 
     link.click();
 
+
     link.remove();
 
-    URL.revokeObjectURL(url);
+
+    // ----------------------------------------
+    // URL解放
+    // ----------------------------------------
+
+    setTimeout(
+        () => {
+
+            URL.revokeObjectURL(
+                url
+            );
+
+        },
+        1000
+    );
+
 
     updateSaveStatus(
         "CSVを出力しました"
+    );
+
+
+    console.log(
+        "CSV出力:",
+        filename
+    );
+
+}
+
+
+// ============================================================
+// 動画読み込み
+// ============================================================
+//
+// 重要：
+// 動画ファイルをメモリへコピーしない。
+// FileReader / ArrayBuffer は使用しない。
+// Blob URLをvideoへ直接渡す。
+// ============================================================
+
+function loadVideo(event) {
+
+    const file =
+        event.target.files[0];
+
+
+    if (!file) {
+
+        return;
+
+    }
+
+
+    const video =
+        document.getElementById(
+            "traffic-video"
+        );
+
+
+    const message =
+        document.getElementById(
+            "video-message"
+        );
+
+
+    if (!video) {
+
+        console.error(
+            "video要素が見つかりません。"
+        );
+
+        return;
+
+    }
+
+
+    // ----------------------------------------
+    // 前の動画URLを解放
+    // ----------------------------------------
+
+    if (
+        currentVideoUrl
+    ) {
+
+        URL.revokeObjectURL(
+            currentVideoUrl
+        );
+
+        currentVideoUrl =
+            null;
+
+    }
+
+
+    // ----------------------------------------
+    // 古い動画を停止
+    // ----------------------------------------
+
+    video.pause();
+
+
+    // ----------------------------------------
+    // 動画URLを作成
+    // ----------------------------------------
+
+    currentVideoUrl =
+        URL.createObjectURL(
+            file
+        );
+
+
+    // ----------------------------------------
+    // 動画を設定
+    // ----------------------------------------
+
+    video.src =
+        currentVideoUrl;
+
+
+    // ----------------------------------------
+    // ブラウザに動画情報だけ先に取得させる
+    // ----------------------------------------
+
+    video.preload =
+        "metadata";
+
+
+    // ----------------------------------------
+    // メッセージ非表示
+    // ----------------------------------------
+
+    if (message) {
+
+        message.style.display =
+            "none";
+
+    }
+
+
+    // ----------------------------------------
+    // 読み込み開始
+    // ----------------------------------------
+
+    video.load();
+
+
+    // ----------------------------------------
+    // メタデータ読み込み完了
+    // ----------------------------------------
+
+    video.onloadedmetadata =
+        function() {
+
+            const duration =
+                video.duration;
+
+
+            console.log(
+                "動画読み込み完了"
+            );
+
+
+            console.log(
+                "動画時間:",
+                formatVideoTime(duration)
+            );
+
+
+            console.log(
+                "動画サイズ:",
+                (
+                    file.size /
+                    1024 /
+                    1024 /
+                    1024
+                ).toFixed(2),
+                "GB"
+            );
+
+
+            updateSaveStatus(
+
+                `動画読み込み完了 ` +
+
+                `(${formatVideoTime(duration)})`
+
+            );
+
+        };
+
+
+    // ----------------------------------------
+    // 動画エラー
+    // ----------------------------------------
+
+    video.onerror =
+        function() {
+
+            console.error(
+                "動画再生エラー:",
+                video.error
+            );
+
+
+            if (message) {
+
+                message.textContent =
+                    "この動画は再生できません";
+
+                message.style.display =
+                    "block";
+
+            }
+
+
+            updateSaveStatus(
+                "動画再生エラー"
+            );
+
+        };
+
+
+    // ----------------------------------------
+    // 再生開始
+    // ----------------------------------------
+
+    video.onplay =
+        function() {
+
+            console.log(
+                "動画再生開始"
+            );
+
+        };
+
+
+    // ----------------------------------------
+    // 一時停止
+    // ----------------------------------------
+
+    video.onpause =
+        function() {
+
+            console.log(
+                "動画一時停止"
+            );
+
+        };
+
+}
+
+
+// ============================================================
+// 動画終了時
+// ============================================================
+
+function handleVideoEnded() {
+
+    const video =
+        document.getElementById(
+            "traffic-video"
+        );
+
+
+    if (!video) {
+
+        return;
+
+    }
+
+
+    console.log(
+        "動画再生終了"
+    );
+
+
+    updateSaveStatus(
+        "動画再生終了"
     );
 
 }
@@ -489,31 +1130,83 @@ document.addEventListener(
     "keydown",
     function(event) {
 
+        // ----------------------------------------
+        // 入力欄ではキーボードカウントしない
+        // ----------------------------------------
+
         if (
-            event.target.tagName === "INPUT" ||
-            event.target.tagName === "TEXTAREA" ||
+
+            event.target.tagName === "INPUT"
+
+            ||
+
+            event.target.tagName === "TEXTAREA"
+
+            ||
+
             event.target.isContentEditable
+
         ) {
+
             return;
+
         }
 
-        if (event.repeat) {
+
+        // ----------------------------------------
+        // 長押しによる連続カウント防止
+        // ----------------------------------------
+
+        if (
+            event.repeat
+        ) {
+
             return;
+
         }
+
+
+        // ----------------------------------------
+        // キー取得
+        // ----------------------------------------
 
         const key =
             event.key.toLowerCase();
 
-        if (!KEY_MAP[key]) {
+
+        // ----------------------------------------
+        // 登録されていないキー
+        // ----------------------------------------
+
+        if (
+            !KEY_MAP[key]
+        ) {
+
             return;
+
         }
 
+
+        // ----------------------------------------
+        // ブラウザ標準操作を止める
+        // ----------------------------------------
+
         event.preventDefault();
+
+
+        // ----------------------------------------
+        // 方向・種類
+        // ----------------------------------------
 
         const [
             direction,
             type
         ] = KEY_MAP[key];
+
+
+        // ----------------------------------------
+        // カウント
+        // ----------------------------------------
 
         changeCount(
             direction,
@@ -526,50 +1219,62 @@ document.addEventListener(
 
 
 // ============================================================
-// 動画読み込み
+// 動画の終了イベント
 // ============================================================
 
-function loadVideo(event) {
+document.addEventListener(
+    "DOMContentLoaded",
+    function() {
 
-    const file =
-        event.target.files[0];
+        const video =
+            document.getElementById(
+                "traffic-video"
+            );
 
-    if (!file) {
-        return;
+
+        if (!video) {
+
+            return;
+
+        }
+
+
+        video.addEventListener(
+            "ended",
+            handleVideoEnded
+        );
+
     }
-
-    const video =
-        document.getElementById(
-            "traffic-video"
-        );
-
-    const message =
-        document.getElementById(
-            "video-message"
-        );
-
-
-    const url =
-        URL.createObjectURL(file);
-
-
-    video.src = url;
-
-    video.load();
-
-
-    message.style.display = "none";
-
-
-    updateSaveStatus(
-        `動画：${file.name}`
-    );
-
-}
+);
 
 
 // ============================================================
-// 起動
+// ページ終了時
+// ============================================================
+//
+// Blob URLを解放
+// ============================================================
+
+window.addEventListener(
+    "beforeunload",
+    function() {
+
+        if (
+            currentVideoUrl
+        ) {
+
+            URL.revokeObjectURL(
+                currentVideoUrl
+            );
+
+        }
+
+    }
+);
+
+
+// ============================================================
+// ページ起動
 // ============================================================
 
 function initialize() {
@@ -578,12 +1283,41 @@ function initialize() {
 
     updateAllDisplay();
 
+
+    console.log(
+        "================================"
+    );
+
     console.log(
         "交通量カウントシステム起動"
     );
 
     console.log(
+        "================================"
+    );
+
+    console.log(
+        "動画再生：優先"
+    );
+
+    console.log(
+        "動画メモリコピー：なし"
+    );
+
+    console.log(
         "キーボード操作：ON"
+    );
+
+    console.log(
+        "長押し防止：ON"
+    );
+
+    console.log(
+        "CSV出力：ON"
+    );
+
+    console.log(
+        "localStorage保存：ON"
     );
 
     console.log(
